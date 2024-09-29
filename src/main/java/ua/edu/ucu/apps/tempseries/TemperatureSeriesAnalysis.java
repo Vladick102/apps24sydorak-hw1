@@ -2,26 +2,16 @@ package ua.edu.ucu.apps.tempseries;
 
 import java.util.Arrays;
 import java.util.InputMismatchException;
-import lombok.Getter;
-import lombok.Setter;
 
-@Getter
-@Setter
 public class TemperatureSeriesAnalysis {
     private double[] series = {};
 
     public TemperatureSeriesAnalysis() {
-        this.series = new double[0];
+        series = new double[0];
     }
 
     public TemperatureSeriesAnalysis(double[] temperatureSeries) {
-        int magicNum = -273;
-        for (double num : temperatureSeries) {
-            if (num < magicNum) {
-                throw new InputMismatchException("To low!");
-            }
-        }
-        this.series = temperatureSeries;
+        series = Arrays.copyOf(temperatureSeries, temperatureSeries.length);
     }
 
     public double average() {
@@ -205,11 +195,21 @@ public class TemperatureSeriesAnalysis {
     }
 
     public int addTemps(double... temps) {
+        final int MAGIC_NUM = -273;
+        for (double num : temps) {
+            if (num < MAGIC_NUM) {
+                throw new InputMismatchException("To low!");
+            }
+        }
         int oldSize = series.length;
         int addSize = temps.length;
         int newSize = oldSize * 2;
         series = Arrays.copyOf(series, newSize);
         System.arraycopy(temps, 0, series, oldSize, addSize);
         return newSize;
+    }
+
+    public double[] getSeries() {
+        return Arrays.copyOf(series, series.length);
     }
 }
