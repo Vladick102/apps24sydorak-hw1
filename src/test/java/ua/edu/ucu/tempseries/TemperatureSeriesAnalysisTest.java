@@ -2,7 +2,6 @@ package ua.edu.ucu.tempseries;
 
 import static org.junit.Assert.*;
 import org.junit.Test;
-import org.junit.experimental.theories.suppliers.TestedOn;
 import ua.edu.ucu.apps.tempseries.TempSummaryStatistics;
 import ua.edu.ucu.apps.tempseries.TemperatureSeriesAnalysis;
 
