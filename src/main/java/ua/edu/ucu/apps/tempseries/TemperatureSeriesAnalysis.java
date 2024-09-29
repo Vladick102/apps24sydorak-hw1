@@ -1,21 +1,23 @@
 package ua.edu.ucu.apps.tempseries;
 
-import java.lang.Math;
 import java.util.Arrays;
 import java.util.InputMismatchException;
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
+@Setter
 public class TemperatureSeriesAnalysis {
-    double[] series = {};
+    private double[] series = {};
 
     public TemperatureSeriesAnalysis() {
         this.series = new double[0];
     }
 
     public TemperatureSeriesAnalysis(double[] temperatureSeries) {
+        int magicNum = -273;
         for (double num : temperatureSeries) {
-            if (num < -273) {
+            if (num < magicNum) {
                 throw new InputMismatchException("To low!");
             }
         }
@@ -25,7 +27,8 @@ public class TemperatureSeriesAnalysis {
     public double average() {
         int size = series.length;
         if (size == 0) {
-            throw new IllegalArgumentException("Can`t find the average of an empty series.");
+            throw new IllegalArgumentException(
+                    "Can`t find the average of an empty series.");
         }
         double sum = 0;
         for (int i = 0; i < size; i++) {
@@ -37,12 +40,13 @@ public class TemperatureSeriesAnalysis {
     public double deviation() {
         int size = series.length;
         if (size == 0) {
-            throw new IllegalArgumentException("Can`t find the average of an empty series.");
+            throw new IllegalArgumentException(
+                    "Can`t find the deviation of an empty series.");
         }
         double avg = average();
         double variance = 0;
         for (int i = 0; i < size; i++) {
-            variance += Math.pow(series[i] - avg, 2);
+            variance += (series[i] - avg) * (series[i] - avg);
         }
         return Math.sqrt(variance / size);
     }
@@ -50,7 +54,8 @@ public class TemperatureSeriesAnalysis {
     public double min() {
         int size = series.length;
         if (size == 0) {
-            throw new IllegalArgumentException("Can`t find the average of an empty series.");
+            throw new IllegalArgumentException(
+                    "Can`t find the minimum of an empty series.");
         }
 
         double minVal = series[0];
@@ -65,7 +70,8 @@ public class TemperatureSeriesAnalysis {
     public double max() {
         int size = series.length;
         if (size == 0) {
-            throw new IllegalArgumentException("Can`t find the average of an empty series.");
+            throw new IllegalArgumentException(
+                    "Can`t find the maximum of an empty series.");
         }
 
         double maxVal = series[0];
@@ -80,7 +86,8 @@ public class TemperatureSeriesAnalysis {
     public double findTempClosestToZero() {
         int size = series.length;
         if (size == 0) {
-            throw new IllegalArgumentException("Can`t find the average of an empty series.");
+            throw new IllegalArgumentException(
+                    "Can`t find closest to zero of an empty series.");
         }
         double minDiff = Math.abs(series[0]);
         double closest = series[0];
@@ -98,7 +105,8 @@ public class TemperatureSeriesAnalysis {
     public double findTempClosestToValue(double tempValue) {
         int size = series.length;
         if (size == 0) {
-            throw new IllegalArgumentException("Can`t find the average of an empty series.");
+            throw new IllegalArgumentException(
+                    "Can`t find closest to value of an empty series.");
         }
         double minDiff = Math.abs(series[0] - tempValue);
         double closest = series[0];
@@ -185,13 +193,14 @@ public class TemperatureSeriesAnalysis {
     public TempSummaryStatistics summaryStatistics() {
         int size = series.length;
         if (size == 0) {
-            throw new IllegalArgumentException("Can`t find the average of an empty series.");
+            throw new IllegalArgumentException(
+                    "Can`t create summary statistics of an empty series.");
         }
         TempSummaryStatistics res = new TempSummaryStatistics();
-        res.avgTemp = average();
-        res.devTemp = deviation();
-        res.minTemp = min();
-        res.maxTemp = max();
+        res.setAvgTemp(average());
+        res.setDevTemp(deviation());
+        res.setMinTemp(min());
+        res.setMaxTemp(max());
         return res;
     }
 
