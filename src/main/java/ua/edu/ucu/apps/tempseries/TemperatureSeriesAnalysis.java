@@ -4,52 +4,56 @@ import java.util.Arrays;
 import java.util.InputMismatchException;
 
 public class TemperatureSeriesAnalysis {
-    private double[] series = {};
+    private double[] series;
+    private int len;
+    private int capacity;
 
     public TemperatureSeriesAnalysis() {
         series = new double[0];
+        len = 0;
+        capacity = 0;
     }
 
     public TemperatureSeriesAnalysis(double[] temperatureSeries) {
-        series = Arrays.copyOf(temperatureSeries, temperatureSeries.length);
+        len = temperatureSeries.length;
+        capacity = len * 2;
+        series = new double[capacity];
+        System.arraycopy(temperatureSeries, 0, series, 0, len);
     }
 
     public double average() {
-        int size = series.length;
-        if (size == 0) {
+        if (len == 0) {
             throw new IllegalArgumentException(
                     "Can`t find the average of an empty series.");
         }
         double sum = 0;
-        for (int i = 0; i < size; i++) {
+        for (int i = 0; i < len; i++) {
             sum += series[i];
         }
-        return sum / size;
+        return sum / len;
     }
 
     public double deviation() {
-        int size = series.length;
-        if (size == 0) {
+        if (len == 0) {
             throw new IllegalArgumentException(
                     "Can`t find the deviation of an empty series.");
         }
         double avg = average();
         double variance = 0;
-        for (int i = 0; i < size; i++) {
+        for (int i = 0; i < len; i++) {
             variance += (series[i] - avg) * (series[i] - avg);
         }
-        return Math.sqrt(variance / size);
+        return Math.sqrt(variance / len);
     }
 
     public double min() {
-        int size = series.length;
-        if (size == 0) {
+        if (len == 0) {
             throw new IllegalArgumentException(
                     "Can`t find the minimum of an empty series.");
         }
 
         double minVal = series[0];
-        for (int i = 0; i < size; i++) {
+        for (int i = 0; i < len; i++) {
             if (series[i] < minVal) {
                 minVal = series[i];
             }
@@ -58,14 +62,13 @@ public class TemperatureSeriesAnalysis {
     }
 
     public double max() {
-        int size = series.length;
-        if (size == 0) {
+        if (len == 0) {
             throw new IllegalArgumentException(
                     "Can`t find the maximum of an empty series.");
         }
 
         double maxVal = series[0];
-        for (int i = 0; i < size; i++) {
+        for (int i = 0; i < len; i++) {
             if (series[i] > maxVal) {
                 maxVal = series[i];
             }
@@ -74,54 +77,37 @@ public class TemperatureSeriesAnalysis {
     }
 
     public double findTempClosestToZero() {
-        int size = series.length;
-        if (size == 0) {
-            throw new IllegalArgumentException(
-                    "Can`t find closest to zero of an empty series.");
-        }
-        double minDiff = Math.abs(series[0]);
-        double closest = series[0];
-
-        for (double num : series) {
-            double diff = Math.abs(num);
-            if (diff < minDiff || (diff == minDiff && num > closest)) {
-                minDiff = diff;
-                closest = num;
-            }
-        }
-        return closest;
+        return findTempClosestToValue(0);
     }
 
     public double findTempClosestToValue(double tempValue) {
-        int size = series.length;
-        if (size == 0) {
+        if (len == 0) {
             throw new IllegalArgumentException(
                     "Can`t find closest to value of an empty series.");
         }
         double minDiff = Math.abs(series[0] - tempValue);
         double closest = series[0];
 
-        for (double num : series) {
-            double diff = Math.abs(num - tempValue);
-            if (diff < minDiff || (diff == minDiff && num > closest)) {
+        for (int i = 0; i < len; i++) {
+            double diff = Math.abs(series[i] - tempValue);
+            if (diff < minDiff || (diff == minDiff && series[i] > closest)) {
                 minDiff = diff;
-                closest = num;
+                closest = series[i];
             }
         }
         return closest;
     }
 
     public double[] findTempsLessThen(double tempValue) {
-        int size = series.length;
         int sizeOfResArray = 0;
-        for (double d : series) {
-            if (d < tempValue) {
+        for (int i = 0; i < len; i++) {
+            if (series[i] < tempValue) {
                 sizeOfResArray++;
             }
         }
         double[] res = new double[sizeOfResArray];
         int idx = 0;
-        for (int i = 0; i < size; i++) {
+        for (int i = 0; i < len; i++) {
             if (series[i] < tempValue) {
                 res[idx] = series[i];
                 idx++;
@@ -131,16 +117,15 @@ public class TemperatureSeriesAnalysis {
     }
 
     public double[] findTempsGreaterThen(double tempValue) {
-        int size = series.length;
         int sizeOfResArray = 0;
-        for (double d : series) {
-            if (d >= tempValue) {
+        for (int i = 0; i < len; i++) {
+            if (series[i] >= tempValue) {
                 sizeOfResArray++;
             }
         }
         double[] res = new double[sizeOfResArray];
         int idx = 0;
-        for (int i = 0; i < size; i++) {
+        for (int i = 0; i < len; i++) {
             if (series[i] >= tempValue) {
                 res[idx] = series[i];
                 idx++;
@@ -150,16 +135,15 @@ public class TemperatureSeriesAnalysis {
     }
 
     public double[] findTempsInRange(double lowerBound, double upperBound) {
-        int size = series.length;
         int sizeOfResArray = 0;
-        for (double d : series) {
-            if (d >= lowerBound && d <= upperBound) {
+        for (int i = 0; i < len; i++) {
+            if (series[i] >= lowerBound && series[i] <= upperBound) {
                 sizeOfResArray++;
             }
         }
         double[] res = new double[sizeOfResArray];
         int idx = 0;
-        for (int i = 0; i < size; i++) {
+        for (int i = 0; i < len; i++) {
             if (series[i] >= lowerBound && series[i] <= upperBound) {
                 res[idx] = series[i];
                 idx++;
@@ -170,19 +154,19 @@ public class TemperatureSeriesAnalysis {
 
     public void reset() {
         series = new double[0];
+        len = 0;
+        capacity = 0;
     }
 
     public double[] sortTemps() {
-        int size = series.length;
-        double[] sortedSeries = Arrays.copyOf(series, size);
+        double[] sortedSeries = Arrays.copyOf(series, len);
         Arrays.sort(sortedSeries);
 
         return sortedSeries;
     }
 
     public TempSummaryStatistics summaryStatistics() {
-        int size = series.length;
-        if (size == 0) {
+        if (len == 0) {
             throw new IllegalArgumentException(
                     "Can`t create summary statistics of an empty series.");
         }
@@ -201,15 +185,23 @@ public class TemperatureSeriesAnalysis {
                 throw new InputMismatchException("To low!");
             }
         }
-        int oldSize = series.length;
         int addSize = temps.length;
-        int newSize = oldSize * 2;
-        series = Arrays.copyOf(series, newSize);
-        System.arraycopy(temps, 0, series, oldSize, addSize);
-        return newSize;
+        int newLen = len + addSize;
+
+        if (newLen > capacity) {
+            int newCapacity = newLen * 2;
+            double[] newSeries = new double[newCapacity];
+            System.arraycopy(series, 0, newSeries, 0, len);
+            System.arraycopy(temps, 0, newSeries, len, addSize);
+            capacity = newCapacity;
+        } else {
+            System.arraycopy(temps, 0, series, len, addSize);
+        }
+        len = newLen;
+        return len;
     }
 
     public double[] getSeries() {
-        return Arrays.copyOf(series, series.length);
+        return Arrays.copyOf(series, len);
     }
 }
